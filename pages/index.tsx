@@ -27,7 +27,8 @@ export default function Home() {
   }, []);
 
   const sortedIntervals = useMemo(() => {
-    const intervals = ddPeriod.data.toSorted((a, b) => {
+    const intervals = ddPeriod.data;
+    intervals.sort((a, b) => {
       const dateA = new Date(a.Start_Date).getTime();
       const dateB = new Date(b.Start_Date).getTime();
       return dateA - dateB;
@@ -124,8 +125,8 @@ export default function Home() {
           style={{ maxWidth: "80%", height: "100%", width: "100% " }}
         />
         <TableContainer>
-          <Table sx={{borderRadius: 4, border:"solid", overflow: "clip"}}>
-            <TableHead sx={{bgcolor: "#f2f2f2"}}>
+          <Table sx={{ borderRadius: 4, border: "solid", overflow: "clip" }}>
+            <TableHead sx={{ bgcolor: "#f2f2f2" }}>
               <TableRow>
                 <TableCell>Period</TableCell>
                 <TableCell>Max DD</TableCell>
