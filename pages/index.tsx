@@ -5,8 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ColorType, createChart } from "lightweight-charts";
 import { isAfter, eachDayOfInterval, format, differenceInDays } from "date-fns";
 import {
-  Box,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -17,11 +15,6 @@ import {
 
 export default function Home() {
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const [tooltip, setTooltip] = useState<{
-    time: string;
-    value: number;
-  } | null>(null);
-
   const datedMap = useMemo(() => {
     const valueMap = new Map<string, number>();
     returns.data.combined.forEach((value) => {
@@ -67,23 +60,22 @@ export default function Home() {
   }, [datedMap]);
 
   useEffect(() => {
+    const chart = createChart(chartContainerRef.current, {
+      layout: {
+        textColor: "#000",
+        background: { type: ColorType.Solid, color: "transparent" },
+      },
+      width: chartContainerRef.current?.clientWidth,
+      height: 300,
+      leftPriceScale: {
+        visible: true,
+        ticksVisible: true,
+      },
+      rightPriceScale: {
+        visible: false,
+      },
+    });
     if (chartContainerRef.current) {
-      const chart = createChart(chartContainerRef.current, {
-        layout: {
-          textColor: "#000",
-          background: { type: ColorType.Solid, color: "transparent" },
-        },
-        width: chartContainerRef.current.clientWidth,
-        height: 300,
-        leftPriceScale: {
-          visible: true,
-          ticksVisible: true,
-        },
-        rightPriceScale: {
-          visible: false,
-        },
-      });
-
       chart.timeScale().fitContent();
 
       const newSeries = chart.addLineSeries({
@@ -117,6 +109,10 @@ export default function Home() {
       wImage.style.height = "275px";
       chartContainerRef.current.appendChild(wImage);
     }
+
+    return () => {
+      chart.remove();
+    };
   }, [sortedIntervals]);
 
   return (
